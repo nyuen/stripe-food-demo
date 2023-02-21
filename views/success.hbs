@@ -1,0 +1,65 @@
+{{> notifications }}
+{{> header }}
+ <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+<main class="flex flex-col bg-gray-100 items-center h-full">
+
+  <div class="bg-gray-50 pt-12 sm:pt-16">
+    
+  </div>
+
+  <div class="py-16 bg-white overflow-hidden rounded-lg shadow-lg ">
+    <div class="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
+      <div class="relative">
+        <h2 class="text-center text-4xl leading-10 font-extrabold tracking-tight text-green-900 sm:text-4xl">
+          {{__ "success.success" }}
+        </h2>
+        <p class="mt-4 max-w-3xl mx-auto text-xl leading-7 font-normal text-center text-gray-500">
+          {{product.name}} - ${{product.display_price}}
+        </p>
+      </div>
+      <div class="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8">
+        <div class="relative pt-2">
+      <div class="relative flex flex-col items-center justify-center max-w-2xl pb-12 lg:max-w-7xl">
+      <div class="mt-10 mb-8 text-center text-success">
+        <h1>
+          <i class="far fa-check-circle fa-5x text-green-700"></i> 
+        </h1>
+      </div>
+      <div class="text-center">
+        <div class="mt-8 text-center text-secondary border-placeholder hidden">
+          <p class="mt-2">Congratulations on your order, your {{product.name}} will be ready for pick up in a few minutes at our restaurant</p>
+          <p class="mt-8">You have been charged <b><span class="amount text-green-700" data-amount="{{ amount }}"></span></b> for the payment <b><a href="#" class="paymentRef text-green-700"></a></b></p>
+        </div>
+
+      </div>
+      
+    </div>
+
+        </div>
+        <div class="mt-10 xxs:mx-auto md:mx-0 md:ml-auto relative lg:mt-0 w-full rounded-lg shadow-lg " aria-hidden="true">
+          <img class="relative mx-auto rounded-lg" width="890" src="{{product.local_img}}" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{{> footer}}
+<script>
+  (() => {
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const client_secret = urlParams.get('payment_intent_client_secret')
+
+stripe
+  .retrievePaymentIntent(client_secret)
+  .then(function(result) {
+    if (result.paymentIntent) {
+      document.getElementsByClassName("amount")[0].innerHTML = "$" + result.paymentIntent.amount / 100;
+      document.getElementsByClassName("paymentRef")[0].innerHTML = result.paymentIntent.id;
+      document.getElementsByClassName("paymentRef")[0].href = "https://dashboard.stripe.com/test/payments/" + result.paymentIntent.id;
+      document.getElementsByClassName("text-secondary")[0].classList.remove("hidden");
+    }
+  });
+  })();
+</script>

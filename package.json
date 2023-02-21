@@ -1,0 +1,50 @@
+{
+  "name": "rocket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:server": "nodemon app.js -e hbs,js,css",
+    "dev": "npm-run-all --parallel watch:css dev:server",
+    "start": "npm run build:css && node app.js",
+    "setup": "node setup.js",
+    "build:css": "postcss public/css/tailwind.css -o public/css/style.css --env production",
+    "watch:css": "postcss public/css/tailwind.css -o public/css/style.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.corp.stripe.com:wwatkins/demo-standard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "cookie-session": "^1.4.0",
+    "debug": "^4.3.2",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.4",
+    "faker": "^5.5.3",
+    "i18n": "^0.15.0",
+    "morgan": "^1.10.0",
+    "stripe": "^10.10.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.0",
+    "@tailwindcss/forms": "^0.4.0",
+    "autoprefixer": "^10.4.0",
+    "cssnano": "^5.0.14",
+    "husky": "^7.0.4",
+    "lint-staged": "^11.2.6",
+    "nodemon": "^2.0.14",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.5",
+    "postcss-cli": "^9.1.0",
+    "prettier": "2.4.1",
+    "tailwindcss": "^3.0.7"
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
+  }
+}

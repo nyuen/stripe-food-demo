@@ -1,0 +1,163 @@
+{{> notifications }}
+{{> header }}
+<main class="flex flex-col flex-1 bg-gray-100 items-center sm:pb-12">
+  <div class="flex flex-col xxs:w-full xxs:px-0 mb-12 lg:mb-0 px-4 max-w-md">
+    <div class="relative flex flex-col items-center justify-center max-w-2xl pb-12 lg:max-w-7xl">
+      <h1 class="mt-6 sm:mt-12 text-3xl font-extrabold text-gray-900">
+        {{__ "signup.header" }}
+      </h1>
+      <p class="mt-2 max-w-2xl text-sm text-gray-600 font-normal">
+        {{__ "signup.lead" }}
+      </p>
+    </div>
+    <div
+      class="flex flex-col items-center justify-center xxs:px-4 xs:px-10 py-8 bg-white xs:rounded-lg shadow-sm"
+    >
+      <p class="mb-6 text-gray-400 text-sm leading-5 font-normal">
+        {{__ "signup.commission" }}
+      </p>
+      <form id="user" class="w-full h-full space-y-4">
+        <div class="rounded-md -space-y-px">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+              {{__ "signup.form.name" }}
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              autocomplete="text"
+              required
+              class="shadow-sm mt-1 mb-6 rounded-full relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-600 focus:border-gray-600 focus:z-10 text-md"
+            />
+          </div>
+          <div>
+            <label for="email-address" class="block text-sm font-medium text-gray-700 mb-1">
+              {{__ "signup.form.email" }}
+            </label>
+            <input
+              id="email-address"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              class="shadow-sm mt-1 mb-6 rounded-full relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-600 focus:border-gray-600 focus:z-10 text-md"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div>
+            <div class="flex justify-between items-center">
+              <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                {{__ "signup.form.phone" }}
+              </label>
+              <span
+                id="mobile-phone-autocomplete-button"
+                class="text-gray-400 cursor-pointer text-xs underline"
+              >
+                {{__ "signup.form.useTestPhone" }}
+              </span>
+            </div>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autocomplete="phone"
+              class="shadow-sm mt-1 mb-6 rounded-full relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-600 focus:border-gray-600 focus:z-10 text-md"
+              required
+            />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+              {{__ "signup.form.password" }}
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              class="shadow-sm mt-1 mb-6 rounded-full relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-600 focus:border-gray-600 focus:z-10 text-md"
+              required
+            />
+          </div>
+        </div>
+        <div
+          class="flex items-center px-3 py-0.5 w-max mx-auto border bg-indigo-100 rounded-3xl text-center"
+        >
+          <span class="text-xs text-gray-500 w-full">
+            {{__ "signup.form.passwordNotice" }}
+          </span>
+        </div>
+        <div>
+          <button
+            type="submit"
+            class="relative flex justify-center items-center w-full mt-6 p-3 border border-transparent rounded-full shadow-sm text-base font-medium text-white bg-green-800 hover:bg-green-900 active:ring-2 active:ring-offset-2 active:ring-green-900"
+          >
+            {{__ "signup.form.button" }}
+            <span
+              class="spinner absolute hidden right-0 animate-spin rounded-full h-5 w-5 mx-3 border-b-2"
+            ></span>
+          </button>
+        </div>
+      </form>
+      <div class="mt-6 w-full h-max text-center relative z-10 h-16">
+        <div class="relative flex align-center h-max min-h-max w-full">
+          <span class="text-sm text-gray-500 bg-white z-20 top-0 w-fit inset-x-0 m-auto px-2">
+            {{__ "signup.haveAccount" }}
+          </span>
+          <div class="w-full border-b border-gray-300 absolute z-10 top-2.5"></div>
+        </div>
+        <p class="">
+          <a href="/signin" class="hover:underline mt-6 max-w-2xl text-sm text-green-600">
+            {{__ "signup.signinLink" }}
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</main>
+{{> footer}}
+<script>
+  (() => {
+    const form = document.getElementById('user');
+
+    form.addEventListener('click', (event) => {
+      const element = event.target;
+
+      if(event.target.id === 'mobile-phone-autocomplete-button' || event.target.parentNode.id === 'mobile-phone-autocomplete-button') {
+        const mobileInput = form.querySelector('#phone')
+        if(mobileInput) {
+          mobileInput.value = '+10000000000'
+        }
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const submitButton = form.querySelector('[type=submit]');
+      const spinner = submitButton.querySelector('.spinner');
+
+      submitButton.classList.add('disabled');
+      spinner.classList.remove('hidden');
+
+      const response = await fetch('/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Object.fromEntries(formData.entries()))
+      });
+
+      if (!response.ok) {
+        submitButton.classList.remove('disabled');
+        spinner.classList.add('hidden');
+        const { error } = await response.json();
+        window.notificationEvents.fail(undefined, error);
+        return;
+      }
+
+      window.location = `/signup/onboarding`
+    });
+  })();
+</script>

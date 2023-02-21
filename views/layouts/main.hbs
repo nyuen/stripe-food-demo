@@ -1,0 +1,25 @@
+<!doctype html>
+<html class="h-full">
+<head>
+    <title>Stripe Demo | Rocket</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700" rel="stylesheet" >
+    <script src="https://js.stripe.com/v3/"></script>
+    {{#if (enableAnalytics)}}
+      {{> analytics }}
+    {{/if}}
+</head>
+<body class="h-full flex flex-col">
+    <script>
+      const stripe = Stripe("{{ stripePublishableKey }}", {locale: "EN"});
+      const custoner_portal_url = "{{ customerPortal }}"
+    </script>
+    {{{body}}}
+    {{#with (demoConfig)}}
+      {{> demo_notice message=pages.all.banner.text}}
+    {{/with}}
+</body>
+</html>

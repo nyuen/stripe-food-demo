@@ -1,0 +1,113 @@
+{{> header }}
+<main class="flex flex-col bg-gray-100 items-center h-full">
+  <div class="flex flex-col xxs:w-full xxs:px-0 mb-12 lg:mb-0 px-4 max-w-md">
+    <div class="relative flex flex-col items-center justify-center max-w-2xl pb-12 lg:max-w-7xl">
+      <h1 class="mt-6 sm:mt-12 text-3xl font-extrabold text-gray-900">
+        {{__ "signin.header" }}
+      </h1>
+      <p class="mt-2 max-w-2xl text-sm text-gray-600 font-normal">
+        {{__ "signin.lead" }}
+      </p>
+    </div>
+    <div class="bg-white rounded-md p-8 shadow-md">
+      <div class="max-w-md w-full">
+        <form class="space-y-6" id="form">
+          <div class="rounded-md shadow-sm">
+            <div class="mb-6">
+              <label for="email-address" class="block text-sm font-medium text-gray-700 mb-1">
+                {{__ "signin.form.email" }}
+              </label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class="w-full shadow-sm focus:ring-1 focus:outline-none  focus:ring-gray-600 py-2.5 focus:border-gray-600 block sm:text-sm border-gray-300 rounded-full text-gray-900"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div class="mb-6">
+              <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                {{__ "signin.form.password" }}
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                class="w-full shadow-sm focus:ring-1 focus:outline-none  focus:ring-gray-600 py-2.5 focus:border-gray-600 block sm:text-sm border-gray-300 rounded-full text-gray-900"
+                placeholder="Password"
+              />
+            </div>
+          </div>
+          <div
+            class="flex py-1 px-3 items-center bg-indigo-100 w-max mx-auto rounded-3xl text-center"
+          >
+            <span class="text-xs text-gray-500 w-full">
+              {{__ "signin.form.passwordNotice" }}
+            </span>
+          </div>
+          <div>
+            <button
+              type="submit"
+              class="relative flex justify-center items-center w-full p-3 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-800 hover:bg-green-900 active:ring-2 active:ring-offset-2 active:ring-green-900"
+            >
+              {{__ "signin.form.button" }}
+              <span
+                class="spinner hidden absolute right-0 animate-spin rounded-full h-5 w-5 mx-3 border-b-2"
+              ></span>
+            </button>
+          </div>
+        </form>
+        <div class="mt-4 text-center relative z-10 h-16">
+          <span
+            class="text-sm text-gray-500 bg-white absolute z-20 top-0 w-fit inset-x-0 m-auto px-2"
+          >
+            {{__ "signin.noAccount" }}
+          </span>
+          <div class="w-full border-b border-gray-300 absolute z-10 top-2.5"></div>
+          <p class="pt-12 sm:pt-6">
+            <a href="/signup" class="hover:underline max-w-2xl text-sm text-green-600">
+              {{__ "signin.signupLink" }}
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{{> footer }}
+<script>
+  (() => {
+    const form = document.getElementById('form');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const body = JSON.stringify(Object.fromEntries(formData.entries()));
+      const submitButton = event.submitter;
+
+      submitButton.classList.add('disabled');
+      submitButton.querySelector('.spinner').classList.remove('hidden');
+
+      const response = await fetch('/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body
+      });
+
+      if (!response.ok) {
+        submitButton.classList.remove('disabled');
+        submitButton.querySelector('.spinner').classList.add('hidden');
+        const { error } = await response.json();
+        window.notificationEvents.fail(undefined, error);
+        return;
+      }
+
+      window.location.href = '/dashboard';
+    });
+  })();
+</script>

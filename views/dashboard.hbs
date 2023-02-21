@@ -1,0 +1,165 @@
+{{#unless session.isOnboarded}}
+  {{> onboarding_notice}}
+{{/unless}}
+{{> header route="Dashboard"}}
+<main class="flex flex-1 flex-col items-center bg-gray-100 w-full relative overflow-y-scroll h-full">
+  <div class="lg:w-8/12 xxs:w-full xxs:px-4 lg:px-0">
+    <div class="flex flex-col sm:flex-row justify-between pt-6 pb-4 border-b px-4 sm:px-0">
+      <div class="flex items-center">
+        <div class="bg-indigo-400 rounded-full flex text-sm mr-4">
+          <span class="inline-flex items-center justify-center h-8 w-8 rounded-full">
+            <span class="text-xs font-medium leading-none text-white">
+              {{userInitials userName}}
+            </span>
+          </span>
+        </div>
+        <div>
+          <p class="text-base leading-6 font-medium text-gray-900">{{userName}}</p>
+          <a href="{{accountLink}}" target="_blank" class="hover:underline text-sm leading-5 font-normal text-green-800 {{#unless isOnboarded}}pointer-events-none{{/unless}}">
+              {{__ "dashboard.accountLink" }}
+          </a>
+        </div>
+      </div>
+      <div class="flex items-center mt-4 sm:mt-0">
+        <p class="text-sm leading-5 font-normal text-gray-400">Rocketeer {{__ "dashboard.accountSince" }} {{formatDate created}}</p>
+      </div>
+    </div>
+    <div class="flex flex-col sm:flex-row justify-between pt-6 pb-4 px-4 sm:px-0">
+      <p class="flex justify-between items-end mb-8 sm:mb-0">
+        <span class="text-gray-500 text-sm font-normal sm:pr-4 sm:pb-[2px]">{{__ "dashboard.totalBalance" }} </span>
+        <span class="text-gray-900 text-xl font-semibold" id="total-amount">${{centsToDollars balance}}</span>
+      </p>
+      <div class="flex flex-col sm:flex-row sm:items-center">
+        <a href="{{payoutsLink}}" target="_blank" class="hover:underline text-sm leading-5 font-normal text-green-800 pr-4 box-sizing mb-8 sm:mb-0 {{#unless isOnboarded}}pointer-events-none{{/unless}}">
+          {{__ "dashboard.payoutslink" }}
+        </a>
+        <button
+          id="payout-button"
+          data-amount={{balance}}
+          type="submit"
+          class="relative flex justify-center items-center w-full sm:w-[181px] p-2 border border-transparent rounded-full shadow-sm text-sm font-medium text-white {{#if isOnboarded}} bg-green-800 hover:bg-green-900 active:ring-2 active:ring-offset-2 active:ring-green-900 {{else}} bg-gray-400 pointer-events-none{{/if}} {{#if (eq balance 0)}} bg-gray-400 pointer-events-none{{/if}}"
+        >
+          {{__ "dashboard.payoutButton" }}
+          <span
+            class="spinner hidden absolute right-0 animate-spin rounded-full h-5 w-5 mx-3 border-b-2"
+          ></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="lg:w-8/12 xxs:w-full lg:px-0 xxs:px-4 my-8">
+    <div></div>
+    {{#if (eq orders.length 0)}}
+      <div class="-my-2 w-full h-60 max-h-60 flex flex-col items-center justify-center">
+        <img src="/images/empty-orders-list.svg" />
+        <h3 class="mt-4 mb-1 text-center text-md leading-5 font-medium text-gray-900">
+          {{__ "dashboard.noOrdersHeader" }}
+        </h3>
+        <p class="text-md text-gray-500 text-sm leading-5 font-normal">
+          {{__ "dashboard.noOrdersLead" }}
+        </p>
+      </div>
+    {{else}}
+      <div class="flex flex-col">
+        <div class="mb-4 text-gray-900 text-base leading-6 font-medium">
+          {{__ "dashboard.recentOrders" }}
+        </div>
+        <div class="flex flex-col">
+          <div class="-my-2 overflow-x-auto overflow-y-auto sm:-mx-4 lg:-mx-8">
+            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+              <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                <table id="orders-table" class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        {{__ "dashboard.ordersTable.col1" }}
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        {{__ "dashboard.ordersTable.col2" }}
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        {{__ "dashboard.ordersTable.col3" }}
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        {{__ "dashboard.ordersTable.col4" }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    {{#each orders}}
+                      {{> order id=source_transfer.source_transaction.metadata.order_id name=source_transfer.source_transaction.metadata.customer amount=amount created=created}}
+                    {{/each}}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/if}}
+  </div>
+  <div class="md:rounded-lg md:shadow-md p-4 bg-white rounded-md sm:fixed sm:left-4 sm:bottom-16 sm:w-[295px] m-4 sm:m-4 text-center">
+    <p class="text-gray-900 text-sm leading-5 font-medium">{{__ "dashboard.createOrderHeader" }}</p>
+    <p class="text-gray-500 text-sm leading-5 font-normal pb-6">
+      {{#if isOnboarded}}
+        {{__ "dashboard.createLead" }}
+      {{else}}
+        {{__ "dashboard.finishOnboarding" }}
+      {{/if}}
+    </p>
+    {{#if isOnboarded}}
+    <a href="/user" class="p-2 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-800 hover:bg-green-900 active:ring-2 active:ring-offset-2 active:ring-green-900">{{__ "dashboard.createOrderButton" }}</a>
+    {{else}}
+        <a href="/signup/onboarding" class="p-2 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-800 hover:bg-green-900 active:ring-2 active:ring-offset-2 active:ring-green-900">{{__ "dashboard.completeOnboardingButton" }}</a>
+    {{/if}}
+  </div>
+</main>
+{{> footer}}
+
+<script>
+  (() => {
+    const payoutButton = document.getElementById('payout-button');
+    const totalAmount = document.getElementById('total-amount');
+    const spinner = payoutButton.querySelector('.spinner');
+
+    payoutButton.addEventListener('click', async (event) => {
+      const amount = event.target.dataset.amount;
+
+      spinner.classList.remove('hidden');
+      payoutButton.classList.add('disabled');
+
+      const response = await fetch('/payout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ amount })
+      });
+
+      spinner.classList.add('hidden');
+      payoutButton.classList.remove('disabled');
+
+      if (!response.ok) {
+        const { error } = await response.json();
+        window.notificationEvents.fail();
+        return;
+      };
+
+      totalAmount.innerText = '$0.00';
+      payoutButton.classList.add('bg-gray-400', 'pointer-events-none');
+    })
+  })();
+</script>

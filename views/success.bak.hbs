@@ -1,0 +1,45 @@
+{{> notifications }}
+{{> header }}
+ <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+<main class="flex flex-col flex-1 bg-gray-100 items-center sm:pb-12">
+  <div class="flex flex-col xxs:w-full xxs:px-0 mb-12 lg:mb-0 px-4 max-w-md">
+    <div class="relative flex flex-col items-center justify-center max-w-2xl pb-12 lg:max-w-7xl">
+      <h1 class="mt-6 sm:mt-12 text-3xl font-extrabold text-green-700">
+        Success
+      </h1>
+      <div class="mt-40 text-center text-success">
+        <h1>
+          <i class="far fa-check-circle fa-10x text-green-700"></i> 
+        </h1>
+      </div>
+      <div class="text-center">
+        <div class="mt-20 text-center text-secondary border-placeholder hidden">
+          Congratulations on your purchase, your have been charged <b><span class="amount text-green-700" data-amount="{{ amount }}"></span></b> for the payment <b><a href="#" class="paymentRef text-green-700"></a></b>
+        </div>
+
+      </div>
+      
+    </div>
+  
+  </div>
+</main>
+{{> footer}}
+<script>
+  (() => {
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const client_secret = urlParams.get('payment_intent_client_secret')
+
+stripe
+  .retrievePaymentIntent(client_secret)
+  .then(function(result) {
+    if (result.paymentIntent) {
+      document.getElementsByClassName("amount")[0].innerHTML = "S$" + result.paymentIntent.amount / 100;
+      document.getElementsByClassName("paymentRef")[0].innerHTML = result.paymentIntent.id;
+      document.getElementsByClassName("paymentRef")[0].href = "https://dashboard.stripe.com/test/payments/" + result.paymentIntent.id;
+      document.getElementsByClassName("text-secondary")[0].classList.remove("hidden");
+    }
+  });
+  })();
+</script>
