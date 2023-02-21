@@ -2,8 +2,6 @@
 
 Rocket - is a demo of accepting B2C flow with Stripe for food delivery companies. These companies are often not technology companies and Rocket helps these platforms to help streamline the accepting payments, orders creating and making payouts for food deliverers.
 
-**You can try the app live at [https://rocket.stripedemos.com](https://rocket.stripedemos.com).**
-
 ## Overview
 
 <img width="1975" alt="Rocket dashboard" src="./public/images/readme-overview.png">
@@ -13,10 +11,6 @@ Rocket has the following features, Stripe s, and Stripe integrations:
 <!-- prettier-ignore -->
 |     |Features
 :---: | :---
-🌏|**Connect Express.** This demo uses [Stripe Connect Express](https://stripe.com/docs/connect/express-accounts) for multiparty payments between customer, platform (Rocket itself) and Rocketeer (delivery guy).
-💳|**Payment Intents.** Relevant [Payment Intents](https://stripe.com/docs/payments/payment-intents) and [Destination Charges](https://stripe.com/docs/connect/destination-charges) are used for creating customer orders.
-💳|**Payouts.** Relevant [Payouts](https://stripe.com/docs/connect/add-and-pay-out-guide#with-code-pay-out-to-user) to let Rocketeer receive funds from Rocket on his bank account or debit card.
-🔑|**User authentication.** Simple session cookie based authentication is included for user login and registration. The session cookie stores the Stripe customer Id for any customer related interactions.
 
 ## Running locally
 
@@ -62,12 +56,5 @@ Run the app:
 $ npm run dev
 ```
 
-Go to [http://localhost:3000](http://localhost:3000) in your browser to start using Rocket.
+Go to [http://localhost:4567](http://localhost:4567) in your browser to start using Rocket.
 
-## Resetting Data
-
-If you'd like to wipe the slate clean and start with a fresh environment, you can [wipe all test data](https://dashboard.stripe.com/account/data) from your Stripe account. Rocket runs purely on top of the Stripe API with no local database so wiping the Stripe account resets the entire application.
-
-## Credits
-
-- Rocket code: [Will Watkins](https://home.corp.stripe.com/people/willwatkins) and [David Santoso](https://home.corp.stripe.com/people/davidsantoso)
