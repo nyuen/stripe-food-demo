@@ -89,7 +89,17 @@ module.exports = {
       display_price: 13,
       price: 1300,
       image: 'https://www.riversidethaicooking.com/wp-content/uploads/2020/05/green-curry-feature.jpg',
-      local_img: 'images/food/greencurry.jpeg'
+      local_img: 'images/food/greencurry.jpeg',
+      show_pay_button: false,
+      payment_method_types: ['card'],
+      payment_methods_order: ['card'],
+      upe_wallets: {
+        applePay:'never',
+        googlePay:'never'
+      },
+      layout: {
+        type: 'tabs'
+      }
     },
     {
       id:1,
@@ -98,7 +108,20 @@ module.exports = {
       price: 1500,
       display_price: 15,
       image: 'https://hot-thai-kitchen.com/wp-content/uploads/2013/03/tom-yum-goong-blog.jpg',
-      local_img: 'images/food/tomyum.jpeg'
+      local_img: 'images/food/tomyum.jpeg',
+      payment_method_types: [],
+      payment_methods_order: ['applepay','googlepay'],
+      show_pay_button: false,
+      upe_wallets: {
+        applePay:'auto',
+        googlePay:'auto'
+      },
+      layout: {
+        type: 'accordion',
+        defaultCollapsed: false,
+        radios: true,
+        spacedAccordionItems: false
+      }
     },
     {
       id:2,
@@ -107,7 +130,20 @@ module.exports = {
       price: 700,
       display_price: 7,
       image: 'https://www.hyattrestaurants.com/uploaded/recipes/Sticky-Rice-with-Mango-and-Coconut-Cream---3-edited.jpg',
-      local_img: 'images/food/mangorice.jpeg'
+      local_img: 'images/food/mangorice.jpeg',
+      show_pay_button: true,
+      payment_method_types: [],
+      payment_methods_order: ['paynow', 'grabpay', 'card'],
+      upe_wallets: {
+        applePay:'auto',
+        googlePay:'auto'
+      },
+      layout: {
+        type: 'accordion',
+        defaultCollapsed: false,
+        radios: true,
+        spacedAccordionItems: false
+      }
     },
   ],
   subscriptions: [

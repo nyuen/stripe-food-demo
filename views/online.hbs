@@ -18,6 +18,12 @@
       <div class="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8">
         <div class="relative pt-2">
             <div id="payment-request-button" style="padding-bottom:20px">
+              <div id="pay-button-element">
+                <!-- Pay Button Element will be inserted here -->
+              </div>
+              <div id="error-message">
+                <!-- Display error message to your customers here -->
+              </div>
              <!-- A Stripe Element will be inserted here. -->
             </div>
             <form id="payment-form">
@@ -36,8 +42,8 @@
               </div>
         </form>
         </div>
-        <div class="mt-10 xxs:mx-auto md:mx-0 md:ml-auto relative lg:mt-0 w-full rounded-lg shadow-lg " aria-hidden="true">
-          <img class="relative mx-auto rounded-lg" width="890" src="{{product.local_img}}" alt="">
+        <div class="mt-10 xxs:mx-auto md:mx-0 md:ml-auto relative lg:mt-0 w-full rounded-lg" aria-hidden="true">
+          <img class="relative mx-auto rounded-lg shadow-lg" width="890" src="{{product.local_img}}" alt="">
         </div>
       </div>
     </div>
@@ -58,48 +64,104 @@ document
 
 async function initialize() {
 
-  const  clientSecret  = "{{clientSecret}}";
+const  clientSecret  = "{{clientSecret}}";
 
-  const appearance = {
-    theme: 'stripe',
-  };
-  const paymentRequest = stripe.paymentRequest({
-  country: 'SG',
+const options = {
+  mode: 'payment',
+  amount: {{product.price}},
   currency: 'sgd',
-  total: {
-    label: "{{product.name}}",
-    amount: {{product.price}},
-  },
-  requestPayerName: true,
-  requestPayerEmail: true,
-});
-  elements = stripe.elements({ appearance, clientSecret });
-  const prButton = elements.create('paymentRequestButton', {
-    paymentRequest,
-  })
-  const paymentElement = elements.create("payment");
+  payment_method_types: {{{json product.payment_method_types}}},
+
+  // Customizable with appearance API.
+};
+
+  elements = stripe.elements(options);
+
+
+  // Pay Button Element implementation
+  if ( {{product.show_pay_button}} ){
+      const payButtonElement = elements.create('payButton', {
+        // One of 'auto', 'vertical', or 'horizontal'. Defaults to 'auto'.
+        layout: 'auto',
+        // Specify a type per payment method
+        // Defaults to 'buy' for Google, 'plain' for Apple, and 'paypal' for PayPal
+      // buttonType: {
+        // googlePay: 'checkout',
+        // applePay: 'check-out',
+        // paypal: 'buynow',
+        //},
+        wallets: {{{json product.upe_wallets}}},
+        // Specify a theme per payment method
+        // Default theme is based on appearance API settings
+        buttonTheme: {
+          applePay: 'white-outline'
+        },
+        // Height in pixels. Defaults to 44. The width is always '100%'.
+        height: 55
+      });
+      payButtonElement.mount('#pay-button-element');
+
+      payButtonElement.on('ready', ({availablePaymentMethods}) => {
+      if (!availablePaymentMethods) {
+        // No buttons will show
+      } else {
+      }
+    });
+
+    payButtonElement.on('click', (event) => {
+      const options = {
+        lineItems: [
+          {
+            name: "{{product.name}}",
+            amount: {{product.display_price}}
+          },
+        ]
+      };
+      event.resolve(options);
+    });
+
+    payButtonElement.on('confirm', async (event) => {
+      const {error} = await stripe.confirmPayment({
+        // `elements` instance used to create the Pay Button Element
+        elements,
+        // `clientSecret` from the created PaymentIntent
+        clientSecret,
+        confirmParams: {
+          return_url:  window.location.protocol + "//" + window.location.host + '/success?product={{product.id}}',
+        },
+      });
+
+      if (error) {
+        // This point is only reached if there's an immediate error when
+        // confirming the payment. Show the error to your customer (for example, payment details incomplete)
+        const messageContainer = document.querySelector('#error-message');
+        messageContainer.textContent = error.message;
+      } else {
+        // The payment UI automatically closes with a success animation.
+        // Your customer is redirected to your `return_url`.
+      }
+    });
+    }
+  const paymentElement = elements.create("payment",{
+    appearance: {theme: 'stripe',},
+    layout: {{{json product.layout}}},
+    paymentMethodOrder: {{{json product.payment_methods_order}}},
+    wallets: {{{json product.upe_wallets}}}
+  });
   paymentElement.mount("#payment-element");
   
-  (async () => {
-    // Check the availability of the Payment Request API first.
-    const result = await paymentRequest.canMakePayment();
-    if (result) {
-      prButton.mount('#payment-request-button');
-    } else {
-      document.getElementById('payment-request-button').style.display = 'none';
-    }
-  })();
 }
 
 async function handleSubmit(e) {
   e.preventDefault();
   setLoading(true);
-
+  const clientSecret = "{{clientSecret}}";
   const { error } = await stripe.confirmPayment({
     elements,
+    clientSecret,
     confirmParams: {
       // Make sure to change this to your payment completion page
-      return_url: "http://localhost:4567/success?product={{product.id}}",
+      return_url: window.location.protocol + "//" + window.location.host + '/success?product={{product.id}}',
     },
   });
 

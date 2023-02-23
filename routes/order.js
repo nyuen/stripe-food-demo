@@ -51,19 +51,15 @@ const getOnline = async (req, res, next) => {
   try {
     let product_id = req.query.product != null ? req.query.product: 0;
 
-    product = products[product_id];
-    const paymentIntent = await stripe.paymentIntents.create({
+    let product = products[product_id];
+
+    payment_intent_options = {
       amount: product.price,
-     // application_fee_amount: product.price/10,
-      currency: "sgd",
-      automatic_payment_methods: {
-        enabled: true,
-      },
-      // transfer_data: {
-      //   destination: TH_CONNECTED_ACCOUNT,
-      // },
-    });
-    
+      // application_fee_amount: product.price/10,
+       currency: "sgd",
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create(payment_intent_options);
     res.render('online', {"product":product, clientSecret:paymentIntent.client_secret});
   } catch (err) {
     next(err);
@@ -92,8 +88,8 @@ const getCheckout = async (req, res, next) => {
   try {
     const green_curry = "price_1Ltm71DEoGxW0yF0acvcUnyw";
     const session = await stripe.checkout.sessions.create({
-      success_url: 'http://localhost/success',
-      cancel_url: 'http://localhost/success',
+      success_url: '/success',
+      cancel_url: '/success',
       line_items: [
         {price: green_curry, quantity: 1},
       ],

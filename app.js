@@ -14,6 +14,7 @@ const errorHandler = require('./middlewares/errorHandler');
 const path = require('path');
 const { I18n } = require('i18n');
 
+
 const app = express();
 
 const i18n = new I18n({
@@ -87,6 +88,9 @@ app.engine(
       },
       centsToDollarsRounded(price) {
         return (price || 0) / 100;
+      },
+      json(obj){
+        return JSON.stringify(obj)
       },
       formatDate(timestamp) {
         const date = new Date(timestamp * 1000);

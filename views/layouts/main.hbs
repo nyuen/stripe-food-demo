@@ -14,7 +14,10 @@
 </head>
 <body class="h-full flex flex-col">
     <script>
-      const stripe = Stripe("{{ stripePublishableKey }}", {locale: "EN"});
+      const stripe = Stripe("{{ stripePublishableKey }}", {locale: "EN",   betas: [
+    "pay_button_element_beta_1",
+    "elements_enable_deferred_intent_beta_1",
+  ]});
       const custoner_portal_url = "{{ customerPortal }}"
     </script>
     {{{body}}}

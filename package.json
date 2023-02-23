@@ -12,6 +12,10 @@
     "build:css": "postcss public/css/tailwind.css -o public/css/style.css --env production",
     "watch:css": "postcss public/css/tailwind.css -o public/css/style.css --watch"
   },
+  "engines": {
+    "node": ">=19.4.0",
+    "npm": ">=9.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git@git.corp.stripe.com:wwatkins/demo-standard.git"
